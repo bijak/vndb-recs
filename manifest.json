@@ -14,7 +14,8 @@
       "js": ["scripts/home.js"],
       "css": [
         "css/fontawesome.min.css",
-        "css/regular.min.css"
+        "css/regular.min.css",
+        "css/vn-rec.css"
      ],
      "matches": [
       "https://vndb.org/"
@@ -26,6 +27,7 @@
       "resources": [
         "css/fontawesome.min.css",
         "css/regular.min.css",
+        "css/vn-rec.css",
         "webfonts/fa-regular-400.woff2",
         "webfonts/fa-regular-400.ttf"
       ],

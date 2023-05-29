@@ -1,3 +1,5 @@
+const maxResults = 100;
+
 async function addRecommendations() {
   const user = await getUser();
   const homepage = document.querySelector(".homepage");
@@ -11,12 +13,13 @@ async function addRecommendations() {
     const pop_header = document.createElement("h1");
     pop_header.textContent = `Popular (Last 30 days)`;
     const pop_list = document.createElement("u1");
+    pop_list.className = "scrollable";
 
     popular.appendChild(pop_header);
     popular.appendChild(pop_list);
 
     async function getPopular() {
-      const popResponse = await fetch('https://vn-recs.andmore.coffee/api/popular?n=10');
+      const popResponse = await fetch('https://vn-recs.andmore.coffee/api/popular?n=' + maxResults);
       const popJson = await popResponse.json(); //extract JSON from the http response
 
       id_array = [];
@@ -61,12 +64,13 @@ async function addRecommendations() {
     const rec_header = document.createElement("h1");
     rec_header.textContent = `Recommended For You`;
     const rec_list = document.createElement("u1");
+    rec_list.className = "scrollable";
 
     recs.appendChild(rec_header);
     recs.appendChild(rec_list);
 
     async function getRecs() {
-      const popResponse = await fetch('https://vn-recs.andmore.coffee/api/recommend/' + user + '?n=10');
+      const popResponse = await fetch('https://vn-recs.andmore.coffee/api/recommend/' + user + '?n=' + maxResults);
       const popJson = await popResponse.json(); //extract JSON from the http response
       const popTitles = await getTitles(popJson);
       popTitles.forEach(element => {
@@ -81,7 +85,7 @@ async function addRecommendations() {
 
 
           // Append the list
-          spanItem.appendChild(getDNRButton(vid, user));
+          spanItem.appendChild(getDNRButton(vid, user, popItem));
           spanItem.appendChild(itemLink);
           popItem.appendChild(spanItem);
           rec_list.appendChild(popItem)
@@ -97,6 +101,7 @@ async function addRecommendations() {
     const morelike = document.createElement("article");
     const morelike_header = document.createElement("h1");
     const morelike_list = document.createElement("u1");
+    morelike_list.className = "scrollable";
 
     morelike.appendChild(morelike_header);
     morelike.appendChild(morelike_list);
@@ -129,7 +134,7 @@ async function addRecommendations() {
       const randVNtitle = randVN.vn.title;
       morelike_header.textContent = randVNtitle + ` Readers Liked`;
 
-      const popResponse = await fetch('https://vn-recs.andmore.coffee/api/item/' + randVNId + '/neighbors');
+      const popResponse = await fetch('https://vn-recs.andmore.coffee/api/item/' + randVNId + '/neighbors?n=' + maxResults);
       const popJson = await popResponse.json(); //extract JSON from the http response
       
       id_array = [];
@@ -182,7 +187,8 @@ async function getTitles(id_array) {
 
   data = {
     "fields": "title",
-    "filters": filter
+    "filters": filter,
+    "results": maxResults
   };
 
   payload = JSON.stringify(data);
@@ -202,7 +208,7 @@ async function getTitles(id_array) {
   return title_results;
 }
 
-function getDNRButton(vid, user) {
+function getDNRButton(vid, user, parent) {
   // Create the button
   itemButton = document.createElement("span");
   itemButton.title = `Do not recommend this title`;
@@ -233,7 +239,7 @@ function getDNRButton(vid, user) {
         },
         body: strData
       });
-      location.reload();
+      parent.remove();
     } catch(err) {
       console.error(`Error: ${err}`);
     }
